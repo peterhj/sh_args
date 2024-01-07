@@ -50,7 +50,8 @@ impl<I: Iterator<Item=String>> Iterator for Args<I> {
               Some(Arg::Option{dash2: true, key, val: None})
             }
           }
-          None => {
+          // FIXME: empty single-dash option.
+          _ => {
             // TODO: option val argument.
             let key = arg_s.get(1 .. ).unwrap().into();
             Some(Arg::Option{dash2: false, key, val: None})
