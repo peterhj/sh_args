@@ -17,7 +17,7 @@ pub enum Arg {
   EndOptions,
 }
 
-pub struct Args<I> {
+pub struct Args<I> where I: Iterator {
   args: Peekable<I>,
   idx:  usize,
 }
