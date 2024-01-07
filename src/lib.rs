@@ -22,8 +22,8 @@ pub struct Args<I> {
   idx:  usize,
 }
 
-impl<I: Iterator> From<I> for Args {
-  fn from(args: I) -> Args {
+impl<I: Iterator> From<I> for Args<I> {
+  fn from(args: I) -> Args<I> {
     let args = args.peekable();
     Args{args}
   }
@@ -45,13 +45,13 @@ impl<I: Iterator<Item=String>> Iterator for Args<I> {
               Some(Arg::EndOptions)
             } else {
               // TODO: option val argument.
-              let key = arg_s.get(2 .. ).unwrap().into()
+              let key = arg_s.get(2 .. ).unwrap().into();
               Some(Arg::Option{dash2: true, key, val: None})
             }
           }
           None => {
             // TODO: option val argument.
-            let key = arg_s.get(1 .. ).unwrap().into()
+            let key = arg_s.get(1 .. ).unwrap().into();
             Some(Arg::Option{dash2: false, key})
           }
         }
