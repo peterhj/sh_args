@@ -1,0 +1,10 @@
+[package]
+name = "sh_args"
+version = "0.1.0-devel"
+edition = "2018"
+
+[features]
+default = ["smol_str"]
+
+[dependencies]
+smol_str = { path = "../smol_str", default-features = false, optional = true }
