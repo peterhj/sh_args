@@ -25,7 +25,8 @@ pub struct Args<I> where I: Iterator {
 impl<I: Iterator> From<I> for Args<I> {
   fn from(args: I) -> Args<I> {
     let args = args.peekable();
-    Args{args}
+    let idx = 0;
+    Args{args, idx}
   }
 }
 
@@ -52,7 +53,7 @@ impl<I: Iterator<Item=String>> Iterator for Args<I> {
           None => {
             // TODO: option val argument.
             let key = arg_s.get(1 .. ).unwrap().into();
-            Some(Arg::Option{dash2: false, key})
+            Some(Arg::Option{dash2: false, key, val: None})
           }
         }
       }
