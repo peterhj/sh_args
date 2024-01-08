@@ -11,10 +11,12 @@ pub type ArgString = std::string::String;
 #[cfg(feature = "smol_str")]
 pub type ArgString = SmolStr;
 
+#[derive(Clone, Debug)]
 pub enum Arg {
-  Param{idx: usize, val: ArgString},
-  Option{dash2: bool, key: String, val: Option<ArgString>},
+  Command{cmd: ArgString},
+  Option{dashes: u8, key: String, val: Option<ArgString>},
   EndOptions,
+  Param{idx: usize, val: ArgString},
 }
 
 pub struct Args<I> where I: Iterator {
@@ -45,16 +47,26 @@ impl<I: Iterator<Item=String>> Iterator for Args<I> {
             if arg_s.len() <= 2 {
               Some(Arg::EndOptions)
             } else {
-              // TODO: option val argument.
-              let key = arg_s.get(2 .. ).unwrap().into();
-              Some(Arg::Option{dash2: true, key, val: None})
+              let arg_s = arg_s.get(2 .. ).unwrap();
+              let (key, val) = if let Some((key, val)) = arg_s.split_once("=") {
+                (key.into(), Some(val.into()))
+              } else {
+                // FIXME: peek next argument.
+                (arg_s.into(), None)
+              };
+              Some(Arg::Option{dashes: 2, key, val: None})
             }
           }
           // FIXME: empty single-dash option.
           _ => {
-            // TODO: option val argument.
-            let key = arg_s.get(1 .. ).unwrap().into();
-            Some(Arg::Option{dash2: false, key, val: None})
+            let arg_s = arg_s.get(1 .. ).unwrap();
+            let (key, val) = if let Some((key, val)) = arg_s.split_once("=") {
+              (key.into(), Some(val.into()))
+            } else {
+              // FIXME: peek next argument.
+              (arg_s.into(), None)
+            };
+            Some(Arg::Option{dashes: 1, key, val: None})
           }
         }
       }
@@ -62,7 +74,11 @@ impl<I: Iterator<Item=String>> Iterator for Args<I> {
         let idx = self.idx;
         self.idx += 1;
         let val = arg_s.into();
-        Some(Arg::Param{idx, val})
+        if idx == 0 {
+          Some(Arg::Command{cmd: val})
+        } else {
+          Some(Arg::Param{idx, val})
+        }
       }
       None => panic!("bug")
     }
