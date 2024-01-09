@@ -60,7 +60,7 @@ impl<I: Iterator<Item=String>> Iterator for Args<I> {
           // FIXME: empty single-dash option.
           _ => {
             let arg_s = arg_s.get(1 .. ).unwrap();
-            let (key, val) = if let Some((key, val)) = arg_s.split_once("=") {
+            let (key, val): (_, Option<ArgString>) = if let Some((key, val)) = arg_s.split_once("=") {
               (key.into(), Some(val.into()))
             } else {
               // FIXME: peek next argument.
