@@ -48,7 +48,7 @@ impl<I: Iterator<Item=String>> Iterator for Args<I> {
               Some(Arg::EndOptions)
             } else {
               let arg_s = arg_s.get(2 .. ).unwrap();
-              let (key, val) = if let Some((key, val)) = arg_s.split_once("=") {
+              let (key, val): (_, Option<ArgString>) = if let Some((key, val)) = arg_s.split_once("=") {
                 (key.into(), Some(val.into()))
               } else {
                 // FIXME: peek next argument.
